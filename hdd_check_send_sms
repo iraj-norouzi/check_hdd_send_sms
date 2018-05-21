@@ -1,0 +1,15 @@
+#!/bin/sh
+df -H | grep -vE '^Filesystem|tmpfs|cdrom' | awk '{ print $5 " " $1 }' | while read output;
+do
+  echo $output
+  usep=$(echo $output | awk '{ print $1}' | cut -d'%' -f1  )
+  partition=$(echo $output | awk '{ print $2 }' )
+  if [ $usep -ge 40 ]; then
+    df -h > hdd_status.log
+    curl --request POST 'https://api.kavenegar.com/v1/457A45592F556E63653437635A47614D346231304F32574D72335374712B7236/sms/send.json' --data "receptor=09197269557&mess$
+    #curl --request POST 'https://api.kavenegar.com/v1/457A45592F556E63653437635A47614D346231304F32574D72335374712B7236/sms/send.json' --header 'Accept: application/js$
+    #python ./send_email.py  "Hi Dear  Running out of space \"$partition ($usep%)\" on $(hostname) as on $(date) Please check attachment log Best Regards" 
+
+    #mail -s "Alert: Almost out of disk space $usep%" useriraj2000@gmail.com
+  fi
+done
